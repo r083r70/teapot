@@ -1,0 +1,7 @@
+# Build files
+bin/
+obj/
+
+# Make files
+Makefile
+*.make
