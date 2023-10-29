@@ -16,6 +16,7 @@ project "game"
 
 	includedirs {
 		"src/",
+		"thirdparty/entt/",
 		"thirdparty/raylib/src/"
 	}
 

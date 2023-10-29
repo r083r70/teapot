@@ -5,3 +5,6 @@ obj/
 # Make files
 Makefile
 *.make
+
+# VSCode files
+.vscode/
