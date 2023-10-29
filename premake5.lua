@@ -3,6 +3,7 @@ workspace "game"
 	configurations { "Debug", "Release" }
 	startproject "game"
 
+include "thirdparty/box2d"
 include "thirdparty/raylib"
 
 project "game"
@@ -16,11 +17,13 @@ project "game"
 
 	includedirs {
 		"src/",
+		"thirdparty/box2d/include",
 		"thirdparty/entt/",
 		"thirdparty/raylib/src/"
 	}
 
 	links {
+		"box2d",
 		"raylib"
 	}
 
