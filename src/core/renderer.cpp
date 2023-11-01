@@ -24,7 +24,7 @@ namespace Teapot
                     GetRenderHeight() - transformCmp.Position.y - halfHeight
                 };
                 
-                DrawTextureEx(spriteCmp.Texture, drawPosition, transformCmp.Rotation, 1, WHITE);
+                DrawTextureEx(spriteCmp.Texture, drawPosition, transformCmp.Rotation, transformCmp.Scale, spriteCmp.Tint);
             });
         }
 
@@ -34,7 +34,8 @@ namespace Teapot
             view.each([](auto &circleCmp, auto &transformCmp)
             {
                 const Vector2 drawPosition = { transformCmp.Position.x, GetRenderHeight() - transformCmp.Position.y };
-                DrawCircleLinesV(drawPosition, circleCmp.Radius, RED);
+                const float scaledRadius = circleCmp.Radius * transformCmp.Scale;
+                DrawCircleLinesV(drawPosition, scaledRadius, circleCmp.Tint);
             });
         }
 
@@ -43,7 +44,9 @@ namespace Teapot
             auto view = scene.GetRegistry().view<const TextComponent, const TransformComponent>();
             view.each([](auto &textCmp, auto &transformCmp)
             {
-                const float halfWidth = MeasureText(textCmp.Text.c_str(), 20) * 0.5f;
+                const int32_t scaledFontSize = textCmp.FontSize * transformCmp.Scale;
+
+                const float halfWidth = MeasureText(textCmp.Text.c_str(), scaledFontSize) * 0.5f;
                 const float halfHeight = 10;
                 const Vector2 drawPosition =
                 {
@@ -51,7 +54,7 @@ namespace Teapot
                     GetRenderHeight() - transformCmp.Position.y - halfHeight
                 };
 
-                DrawText(textCmp.Text.c_str(), drawPosition.x, drawPosition.y, 20, GREEN);
+                DrawTextEx(textCmp.TextFont, textCmp.Text.c_str(), drawPosition, scaledFontSize, textCmp.Spacing, textCmp.Tint);
             });
         }
 

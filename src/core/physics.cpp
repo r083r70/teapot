@@ -10,6 +10,20 @@
 
 namespace Teapot
 {
+    b2BodyType RigidbodyTypeTob2BodyType(RigidbodyType type)
+    {
+        switch(type)
+        {
+        case RigidbodyType::Static:     return b2_staticBody;
+        case RigidbodyType::Dynamic:    return b2_dynamicBody;
+        case RigidbodyType::Kinematic:  return b2_kinematicBody;
+        
+        default:
+            assert(false);
+            return b2_staticBody;
+        }
+    }
+
     void Physics::Init(Scene& scene)
     {
         b2Vec2 gravity(0.0f, -10.0f);
@@ -19,7 +33,7 @@ namespace Teapot
         view.each([this, &scene](auto entity, auto& rigidbodyCmp, auto& transformCmp)
         {
             b2BodyDef bodyDefinition;
-            bodyDefinition.type = rigidbodyCmp.IsDynamic ? b2_dynamicBody : b2_staticBody;
+            bodyDefinition.type = RigidbodyTypeTob2BodyType(rigidbodyCmp.Type);
             bodyDefinition.position.Set(transformCmp.Position.x, transformCmp.Position.y);
             bodyDefinition.fixedRotation = rigidbodyCmp.FixedRotation;
             

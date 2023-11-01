@@ -35,7 +35,7 @@ namespace Teapot
             Entity e = m_Scene.CreateEntity();
             e.GetComponent<TransformComponent>().Position = Vector2{ renderWidth * 0.5f, renderHeight };
             e.AddComponent<CircleComponent>().Radius = 50;
-            e.AddComponent<RigidbodyComponent>().IsDynamic = true;
+            e.AddComponent<RigidbodyComponent>().Type = RigidbodyType::Dynamic;
             e.AddComponent<BoxColliderComponent>().HalfExtents = Vector2{1,1};
         }
     }

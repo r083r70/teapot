@@ -5,6 +5,8 @@
 namespace Teapot
 {
     class Entity;
+
+    enum class RigidbodyType { Static, Dynamic, Kinematic };
     
     struct UUIDComponent
     {
@@ -18,44 +20,53 @@ namespace Teapot
 
     struct TransformComponent
     {
-        Vector2 Position;
-        float Rotation;
+        Vector2 Position = Vector2(0,0);
+        float Rotation = 0.f;
+        float Scale = 1.f;
     };
 
     struct RigidbodyComponent
     {
-        bool IsDynamic;
-        bool FixedRotation;
+        RigidbodyType Type = RigidbodyType::Static;
+        bool FixedRotation = true;
 
-        void* PhysicBody;
+        void* PhysicBody = nullptr;
     };
 
     struct BoxColliderComponent
     {
-        Vector2 Offset;
-        Vector2 HalfExtents;
+        Vector2 Offset = Vector2(0,0);
+        Vector2 HalfExtents = Vector2(.5f,.5f);
 
 		float Density = 1.0f;
 		float Friction = 0.5f;
 		float Restitution = 0.0f;
 		float RestitutionThreshold = 0.5f;
 
-        void* PhysicFixture;
+        void* PhysicFixture = nullptr;
     };
 
     struct SpriteComponent
     {
         Texture2D Texture;
+        Color Tint = WHITE;
     };
 
     struct CircleComponent
     {
-        float Radius;
+        float Radius = 1.f;
+        Color Tint = WHITE;
     };
 
     struct TextComponent
     {
         std::string Text;
+
+        Font TextFont = GetFontDefault();
+        int32_t FontSize = 10;
+        int32_t Spacing = 1;
+
+        Color Tint = BLACK;
     };
 
     struct ScriptComponent

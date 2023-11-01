@@ -1,12 +1,12 @@
-workspace "game"
+workspace "teapot"
 	architecture "x86_64"
 	configurations { "Debug", "Release" }
-	startproject "game"
+	startproject "teapot"
 
 include "thirdparty/box2d"
 include "thirdparty/raylib"
 
-project "game"
+project "teapot"
 	kind "ConsoleApp"
 
 	language "C++"
