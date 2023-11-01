@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include <raylib.h>
+#include <raymath.h>
 
 #include <ecs/components.h>
 #include <ecs/scene.h>
@@ -11,48 +12,50 @@ namespace Teapot
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        // Sprites
+        // Camera
         {
-            auto view = scene.GetRegistry().view<const SpriteComponent, const TransformComponent>();
-            view.each([](auto &spriteCmp, auto &transformCmp)
+            const Camera& camera = scene.GetCamera();
+            Camera2D camera2d;
+            camera2d.target = camera.Position;
+            camera2d.offset = Vector2{ GetRenderWidth()*0.5f, GetRenderHeight()*0.5f };
+            camera2d.rotation = camera.Rotation;
+            camera2d.zoom = camera.Zoom;
+
+            BeginMode2D(camera2d);
+
+            auto sprites = scene.GetRegistry().view<const SpriteComponent, const TransformComponent>();
+            sprites.each([](auto &spriteCmp, auto &transformCmp)
             {
                 const float halfWidth = spriteCmp.Texture.width * 0.5f;
                 const float halfHeight = spriteCmp.Texture.height * 0.5f;
-                const Vector2 drawPosition =
-                {
-                    transformCmp.Position.x - halfWidth,
-                    GetRenderHeight() - transformCmp.Position.y - halfHeight
-                };
-                
+                Vector2 drawPosition = Vector2Multiply(transformCmp.Position, { 1.f, -1.f });
+                drawPosition = Vector2Subtract(drawPosition, { halfWidth, halfHeight });
+
                 DrawTextureEx(spriteCmp.Texture, drawPosition, transformCmp.Rotation, transformCmp.Scale, spriteCmp.Tint);
             });
-        }
 
-        // Circles
-        {
-            auto view = scene.GetRegistry().view<const CircleComponent, const TransformComponent>();
-            view.each([](auto &circleCmp, auto &transformCmp)
+            auto cicles = scene.GetRegistry().view<const CircleComponent, const TransformComponent>();
+            cicles.each([](auto &circleCmp, auto &transformCmp)
             {
-                const Vector2 drawPosition = { transformCmp.Position.x, GetRenderHeight() - transformCmp.Position.y };
+                const Vector2 drawPosition = Vector2Multiply(transformCmp.Position, { 1.f, -1.f });
                 const float scaledRadius = circleCmp.Radius * transformCmp.Scale;
+
                 DrawCircleLinesV(drawPosition, scaledRadius, circleCmp.Tint);
             });
+            
+            EndMode2D();
         }
 
-        // Texts
+        // UI
         {
-            auto view = scene.GetRegistry().view<const TextComponent, const TransformComponent>();
-            view.each([](auto &textCmp, auto &transformCmp)
+            auto texts = scene.GetRegistry().view<const TextComponent, const TransformComponent>();
+            texts.each([](auto &textCmp, auto &transformCmp)
             {
                 const int32_t scaledFontSize = textCmp.FontSize * transformCmp.Scale;
 
-                const float halfWidth = MeasureText(textCmp.Text.c_str(), scaledFontSize) * 0.5f;
-                const float halfHeight = 10;
-                const Vector2 drawPosition =
-                {
-                    transformCmp.Position.x - halfWidth,
-                    GetRenderHeight() - transformCmp.Position.y - halfHeight
-                };
+                const Vector2 extents = MeasureTextEx(textCmp.TextFont, textCmp.Text.c_str(), scaledFontSize, textCmp.Spacing);
+                const Vector2 halfExtents = Vector2Scale(extents, 0.5f);
+                const Vector2 drawPosition = Vector2Subtract(transformCmp.Position, halfExtents);
 
                 DrawTextEx(textCmp.TextFont, textCmp.Text.c_str(), drawPosition, scaledFontSize, textCmp.Spacing, textCmp.Tint);
             });

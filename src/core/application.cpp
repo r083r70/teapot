@@ -6,19 +6,22 @@
 
 namespace Teapot
 {
-    void MoveDown(Entity entity, float deltaTime)
+    class MoveDown : public Scriptable
     {
-        entity.GetComponent<TransformComponent>().Position.y -= deltaTime * 3.f;
-    }
+        virtual void OnUpdate(float deltaTime) override
+        {
+            m_Entity.GetComponent<TransformComponent>().Position.y -= deltaTime * 3.f;
+        }
+    };
 
     Application::Application(const char* name, int32_t width, int32_t height)
     {
         InitWindow(width, height, name);
         
-        const float renderWidth = GetRenderWidth();
-        const float renderHeight = GetRenderHeight();
-        
         {
+            const float renderWidth = GetRenderWidth();
+            const float renderHeight = GetRenderHeight();
+
             Entity e = m_Scene.CreateEntity();
             e.GetComponent<TransformComponent>().Position = Vector2{ renderWidth * 0.5f, renderHeight * 0.5f };
             e.AddComponent<TextComponent>().Text = "Congrats! You created your first ECS!";
@@ -26,14 +29,14 @@ namespace Teapot
 
         {
             Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position = Vector2{ renderWidth * 0.5f, renderHeight };
+            e.GetComponent<TransformComponent>().Position.y = 200;
             e.AddComponent<SpriteComponent>().Texture = LoadTexture("resources/teapot.png");
-            e.AddComponent<ScriptComponent>().UpdateFunction = &MoveDown;
+            e.AddComponent<ScriptComponent>().Bind<MoveDown>();
         }
 
         {
             Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position = Vector2{ renderWidth * 0.5f, renderHeight };
+            e.GetComponent<TransformComponent>().Position.y = 200;
             e.AddComponent<CircleComponent>().Radius = 50;
             e.AddComponent<RigidbodyComponent>().Type = RigidbodyType::Dynamic;
             e.AddComponent<BoxColliderComponent>().HalfExtents = Vector2{1,1};
@@ -47,6 +50,7 @@ namespace Teapot
 
     void Application::Run()
     {
+        m_Dispatcher.Init(m_Scene);
         m_Physics.Init(m_Scene);
 
         while (!WindowShouldClose())

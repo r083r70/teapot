@@ -8,6 +8,7 @@ namespace Teapot
     class Entity
     {
     public:
+        Entity() : Entity(nullptr, entt::null) {}
         Entity(Scene* scene, entt::entity handle);
 
         operator bool() const { return m_Handle != entt::null; }

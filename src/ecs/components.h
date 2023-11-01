@@ -2,6 +2,8 @@
 #include <string>
 #include <raylib.h>
 
+#include "scripts.h"
+
 namespace Teapot
 {
     class Entity;
@@ -71,6 +73,18 @@ namespace Teapot
 
     struct ScriptComponent
     {
-        void (*UpdateFunction)(Entity, float);
+        Scriptable* Instance;
+        Scriptable* (*InstantiateFunction)();
+
+        ~ScriptComponent()
+        {
+            delete Instance;
+        }
+
+        template<class T>
+        void Bind()
+        {
+            InstantiateFunction = []() { return static_cast<Scriptable*>(new T()); };
+        }
     };
 }
