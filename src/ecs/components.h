@@ -2,6 +2,7 @@
 #include <string>
 #include <raylib.h>
 
+#include "core/uuid.h"
 #include "scripts.h"
 
 namespace Teapot
@@ -10,9 +11,9 @@ namespace Teapot
 
     enum class RigidbodyType { Static, Dynamic, Kinematic };
     
-    struct UUIDComponent
+    struct IDComponent
     {
-        int64_t UUID;
+        UUID ID;
     };
 
     struct NameComponent

@@ -1,10 +1,12 @@
 #pragma once
 #include <entt.hpp>
 #include <raylib.h>
+#include <string_view>
 
 namespace Teapot
 {
     class Entity;
+    class UUID;
 
     struct Camera
     {
@@ -25,6 +27,8 @@ namespace Teapot
         const Camera& GetCamera() const { return m_Camera; }
 
         Entity CreateEntity();
+        Entity CreateEntityWithUUID(UUID uuid);
+        Entity CreateEntityWithName(std::string_view name);
 
     private:
         entt::registry m_Registry;
