@@ -11,7 +11,7 @@ namespace Teapot
     class Physics
     {
     public:
-        void Init(Scene& scene);
+        void Start(Scene& scene);
         void Update(Scene& scene, float deltaTime);
     
     private:

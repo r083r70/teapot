@@ -2,8 +2,8 @@
 #include <string>
 #include <raylib.h>
 
-#include "core/uuid.h"
-#include "scripts.h"
+#include <core/uuid.h>
+#include "scripts/scriptable.h"
 
 namespace Teapot
 {
@@ -75,17 +75,15 @@ namespace Teapot
     struct ScriptComponent
     {
         Scriptable* Instance;
-        Scriptable* (*InstantiateFunction)();
 
-        ~ScriptComponent()
-        {
-            delete Instance;
-        }
+        void (*InstantiateFunction)(ScriptComponent&);
+        void (*DestroyFunction)(ScriptComponent&);
 
         template<class T>
         void Bind()
         {
-            InstantiateFunction = []() { return static_cast<Scriptable*>(new T()); };
+            InstantiateFunction = [](ScriptComponent& cmp) { cmp.Instance = static_cast<Scriptable*>(new T()); };
+            DestroyFunction = [](ScriptComponent& cmp) { delete cmp.Instance; cmp.Instance = nullptr; };
         }
     };
 }

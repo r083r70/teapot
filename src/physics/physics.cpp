@@ -24,7 +24,7 @@ namespace Teapot
         }
     }
 
-    void Physics::Init(Scene& scene)
+    void Physics::Start(Scene& scene)
     {
         b2Vec2 gravity(0.0f, -10.0f);
         m_PhysicWorld = std::make_shared<b2World>(gravity);

@@ -5,7 +5,25 @@
 namespace Teapot
 {
     Scene::Scene()
+        : m_State(SceneState::None)
     {
+    }
+
+    void Scene::Start()
+    {
+        m_ScriptManager.Start(*this);
+        m_Physics.Start(*this);
+    }
+
+    void Scene::Stop()
+    {
+        m_ScriptManager.Stop(*this);
+    }
+
+    void Scene::Update(float deltaTime)
+    {
+        m_ScriptManager.Update(*this, deltaTime);
+        m_Physics.Update(*this, deltaTime);
     }
 
     Entity Scene::CreateEntity()

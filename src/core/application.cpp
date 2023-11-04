@@ -10,7 +10,7 @@ namespace Teapot
     {
         virtual void OnUpdate(float deltaTime) override
         {
-            m_Entity.GetComponent<TransformComponent>().Position.y -= deltaTime * 3.f;
+            GetComponent<TransformComponent>().Position.y -= deltaTime * 3.f;
         }
     };
 
@@ -23,7 +23,7 @@ namespace Teapot
             const float renderHeight = GetRenderHeight();
 
             Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position = Vector2{ renderWidth * 0.5f, renderHeight * 0.5f };
+            e.GetComponent<TransformComponent>().Position;
             e.AddComponent<TextComponent>().Text = "Congrats! You created your first ECS!";
         }
 
@@ -50,16 +50,16 @@ namespace Teapot
 
     void Application::Run()
     {
-        m_Dispatcher.Init(m_Scene);
-        m_Physics.Init(m_Scene);
+        m_Scene.Start();
 
         while (!WindowShouldClose())
         {
             const float deltaTime = GetFrameTime();
-
-            m_Dispatcher.UpdateScripts(m_Scene, deltaTime);
-            m_Physics.Update(m_Scene, deltaTime);
+            
+            m_Scene.Update(deltaTime);
             m_Renderer.Draw(m_Scene);
         }
+
+        m_Scene.Stop();
     }
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "entity.h"
+#include "../entity.h"
 
 namespace Teapot
 {
@@ -13,8 +13,17 @@ namespace Teapot
         virtual void OnUpdate(float deltaTime) {};
         virtual void OnStop() {};
 
-    protected:
+        template<typename T>
+        T& GetComponent();
+
+    private:
         Entity m_Entity;
-        friend class Dispatcher;
+        friend class ScriptManager;
     };
+
+    template<typename T>
+    T& Scriptable::GetComponent()
+    {
+        return m_Entity.GetComponent<T>();
+    }
 }

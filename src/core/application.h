@@ -4,8 +4,6 @@
 
 #include <ecs/scene.h>
 
-#include "dispatcher.h"
-#include "physics.h"
 #include "renderer.h"
 
 namespace Teapot
@@ -19,10 +17,7 @@ namespace Teapot
         void Run();
 
     private:
-        Dispatcher m_Dispatcher;
-        Physics m_Physics;
         Renderer m_Renderer;
-
         Scene m_Scene;
     };
 }
