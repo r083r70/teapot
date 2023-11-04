@@ -1,46 +1,16 @@
 #include "application.h"
 #include <raylib.h>
 
-#include "ecs/components.h"
-#include "ecs/entity.h"
+#include "gamelayer.h"
 
 namespace Teapot
 {
-    class MoveDown : public Scriptable
-    {
-        virtual void OnUpdate(float deltaTime) override
-        {
-            GetComponent<TransformComponent>().Position.y -= deltaTime * 3.f;
-        }
-    };
+    Application* Application::s_Instance = nullptr;
 
     Application::Application(const char* name, int32_t width, int32_t height)
     {
+        s_Instance = this;
         InitWindow(width, height, name);
-        
-        {
-            const float renderWidth = GetRenderWidth();
-            const float renderHeight = GetRenderHeight();
-
-            Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position;
-            e.AddComponent<TextComponent>().Text = "Congrats! You created your first ECS!";
-        }
-
-        {
-            Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position.y = 200;
-            e.AddComponent<SpriteComponent>().Texture = LoadTexture("resources/teapot.png");
-            e.AddComponent<ScriptComponent>().Bind<MoveDown>();
-        }
-
-        {
-            Entity e = m_Scene.CreateEntity();
-            e.GetComponent<TransformComponent>().Position.y = 200;
-            e.AddComponent<CircleComponent>().Radius = 50;
-            e.AddComponent<RigidbodyComponent>().Type = RigidbodyType::Dynamic;
-            e.AddComponent<BoxColliderComponent>().HalfExtents = Vector2{1,1};
-        }
     }
 
     Application::~Application()
@@ -50,16 +20,34 @@ namespace Teapot
 
     void Application::Run()
     {
-        m_Scene.Start();
+        StartScene();
 
         while (!WindowShouldClose())
         {
             const float deltaTime = GetFrameTime();
             
+            ExecOnGameLayers([this, deltaTime](auto layer) { layer->PreUpdate(m_Scene, deltaTime); });
             m_Scene.Update(deltaTime);
+            ExecOnGameLayers([this, deltaTime](auto layer) { layer->PostUpdate(m_Scene, deltaTime); });
+
             m_Renderer.Draw(m_Scene);
         }
 
-        m_Scene.Stop();
+        StopScene();
+    }
+
+    void Application::StartScene()
+    {
+        m_Scene = {};
+        ExecOnGameLayers([this](auto layer) { layer->PostLoad(m_Scene); });
+
+        m_Scene.Start();
+        ExecOnGameLayers([this](auto layer) { layer->PostStart(m_Scene); });
+    }
+    
+    void Application::StopScene()
+    {
+        ExecOnGameLayers([this](auto layer) { layer->PreStop(m_Scene); });
+        m_Scene.Start();
     }
 }

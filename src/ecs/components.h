@@ -76,14 +76,14 @@ namespace Teapot
     {
         Scriptable* Instance;
 
-        void (*InstantiateFunction)(ScriptComponent&);
-        void (*DestroyFunction)(ScriptComponent&);
+        void (*CreationFunction)(ScriptComponent&);
+        void (*DestructionFunction)(ScriptComponent&);
 
         template<class T>
         void Bind()
         {
-            InstantiateFunction = [](ScriptComponent& cmp) { cmp.Instance = static_cast<Scriptable*>(new T()); };
-            DestroyFunction = [](ScriptComponent& cmp) { delete cmp.Instance; cmp.Instance = nullptr; };
+            CreationFunction = [](ScriptComponent& cmp) { cmp.Instance = static_cast<Scriptable*>(new T()); };
+            DestructionFunction = [](ScriptComponent& cmp) { delete cmp.Instance; cmp.Instance = nullptr; };
         }
     };
 }

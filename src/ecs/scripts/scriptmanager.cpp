@@ -12,7 +12,7 @@ namespace Teapot
         auto scritps = scene.GetRegistry().view<ScriptComponent>();
         scritps.each([&scene](auto entity, auto& scriptCmp)
         {
-            scriptCmp.InstantiateFunction(scriptCmp);
+            scriptCmp.CreationFunction(scriptCmp);
 
             scriptCmp.Instance->m_Entity = Entity{&scene, entity};
             scriptCmp.Instance->OnStart();
@@ -25,7 +25,7 @@ namespace Teapot
         scritps.each([](auto entity, auto& scriptCmp)
         {
             scriptCmp.Instance->OnStop();
-            scriptCmp.DestroyFunction(scriptCmp);
+            scriptCmp.DestructionFunction(scriptCmp);
         });
     }
 
