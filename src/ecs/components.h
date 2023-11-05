@@ -3,7 +3,7 @@
 #include <raylib.h>
 
 #include <core/uuid.h>
-#include "scripts/scriptable.h"
+#include "scriptable.h"
 
 namespace Teapot
 {

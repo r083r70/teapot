@@ -1,9 +1,9 @@
 #include "scriptmanager.h"
 
-#include "../components.h"
-#include "../entity.h"
-#include "../scene.h"
-#include "scriptable.h"
+#include <ecs/components.h>
+#include <ecs/entity.h>
+#include <ecs/scene.h>
+#include <ecs/scriptable.h>
 
 namespace Teapot
 {

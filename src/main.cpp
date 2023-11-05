@@ -1,8 +1,8 @@
 #include "core/application.h"
 
-#include <core/gamelayer.h>
 #include <ecs/components.h>
 #include <ecs/scene.h>
+#include <gamelayers/gamelayer.h>
 
 class MoveDown : public Teapot::Scriptable
 {
@@ -15,7 +15,7 @@ class MoveDown : public Teapot::Scriptable
 class SimpleGameLayer : public Teapot::GameLayer
 {
 public:
-    virtual void PostLoad(Teapot::Scene& scene) override
+    virtual void Load(Teapot::Scene& scene) override
     {
         {
             const float renderWidth = GetRenderWidth();

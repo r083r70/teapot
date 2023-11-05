@@ -5,8 +5,8 @@
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_world.h>
 
-#include "ecs/components.h"
-#include "ecs/entity.h"
+#include <ecs/components.h>
+#include <ecs/entity.h>
 
 namespace Teapot
 {

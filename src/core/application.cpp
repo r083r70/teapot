@@ -1,7 +1,9 @@
 #include "application.h"
 #include <raylib.h>
 
-#include "gamelayer.h"
+#include <gamelayers/gamelayer.h>
+#include <gamelayers/scriptmanager.h>
+#include <gamelayers/physics.h>
 
 namespace Teapot
 {
@@ -11,6 +13,10 @@ namespace Teapot
     {
         s_Instance = this;
         InitWindow(width, height, name);
+
+        // Add default Layers
+        AddGameLayer<Physics>();
+        AddGameLayer<ScriptManager>();
     }
 
     Application::~Application()
@@ -26,9 +32,7 @@ namespace Teapot
         {
             const float deltaTime = GetFrameTime();
             
-            ExecOnGameLayers([this, deltaTime](auto layer) { layer->PreUpdate(m_Scene, deltaTime); });
-            m_Scene.Update(deltaTime);
-            ExecOnGameLayers([this, deltaTime](auto layer) { layer->PostUpdate(m_Scene, deltaTime); });
+            ExecOnGameLayers([this, deltaTime](auto layer) { layer->Update(m_Scene, deltaTime); });
 
             m_Renderer.Draw(m_Scene);
         }
@@ -39,15 +43,13 @@ namespace Teapot
     void Application::StartScene()
     {
         m_Scene = {};
-        ExecOnGameLayers([this](auto layer) { layer->PostLoad(m_Scene); });
 
-        m_Scene.Start();
-        ExecOnGameLayers([this](auto layer) { layer->PostStart(m_Scene); });
+        ExecOnGameLayers([this](auto layer) { layer->Load(m_Scene); });
+        ExecOnGameLayers([this](auto layer) { layer->Start(m_Scene); });
     }
     
     void Application::StopScene()
     {
-        ExecOnGameLayers([this](auto layer) { layer->PreStop(m_Scene); });
-        m_Scene.Start();
+        ExecOnGameLayers([this](auto layer) { layer->Stop(m_Scene); });
     }
 }
