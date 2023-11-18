@@ -2,7 +2,7 @@
 
 #include <ecs/components.h>
 #include <ecs/scene.h>
-#include <gamelayers/gamelayer.h>
+#include <scenelayers/scenelayer.h>
 
 class MoveDown : public Teapot::Scriptable
 {
@@ -12,15 +12,15 @@ class MoveDown : public Teapot::Scriptable
     }
 };
 
-class SimpleGameLayer : public Teapot::GameLayer
+class SimpleLayer : public Teapot::SceneLayer
 {
 public:
-    virtual void Load(Teapot::Scene& scene) override
+    virtual void Update(Teapot::Scene& scene, float deltaTime) override
     {
+        Countdown -= deltaTime;
+        if (Countdown > 0.f)
+            return;
         {
-            const float renderWidth = GetRenderWidth();
-            const float renderHeight = GetRenderHeight();
-
             Teapot::Entity e = scene.CreateEntity();
             e.GetComponent<Teapot::TransformComponent>().Position;
             e.AddComponent<Teapot::TextComponent>().Text = "Congrats! You created your first ECS!";
@@ -40,13 +40,18 @@ public:
             e.AddComponent<Teapot::RigidbodyComponent>().Type = Teapot::RigidbodyType::Dynamic;
             e.AddComponent<Teapot::BoxColliderComponent>().HalfExtents = Vector2{1,1};
         }
+
+        Countdown = 3600;
     }
+
+private:
+    float Countdown = 1.f;
 };
 
 int main(void)
 {
     Teapot::Application app("Test", 800, 400);
-    app.AddGameLayer<SimpleGameLayer>();
+    app.AddSceneLayerBuilders([]() { return std::make_shared<SimpleLayer>(); });
     app.Run();
     
     return 0;

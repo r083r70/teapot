@@ -9,9 +9,9 @@ namespace Teapot
         virtual ~Scriptable() {}
 
     protected:
-        virtual void OnStart() {};
+        virtual void OnCreate() {};
         virtual void OnUpdate(float deltaTime) {};
-        virtual void OnStop() {};
+        virtual void OnDestroy() {};
 
         template<typename T>
         T& GetComponent();

@@ -1,9 +1,9 @@
 #include "application.h"
 #include <raylib.h>
 
-#include <gamelayers/gamelayer.h>
-#include <gamelayers/scriptmanager.h>
-#include <gamelayers/physics.h>
+#include <scenelayers/scenelayer.h>
+#include <scenelayers/scriptmanager.h>
+#include <scenelayers/physics.h>
 
 namespace Teapot
 {
@@ -15,13 +15,18 @@ namespace Teapot
         InitWindow(width, height, name);
 
         // Add default Layers
-        AddGameLayer<Physics>();
-        AddGameLayer<ScriptManager>();
+        AddSceneLayerBuilders([]() { return std::make_shared<Physics>(); });
+        AddSceneLayerBuilders([]() { return std::make_shared<ScriptManager>(); });
     }
 
     Application::~Application()
     {
         CloseWindow();
+    }
+
+    void Application::AddSceneLayerBuilders(SceneLayerBuilder builder)
+    {
+        m_SceneLayerBuilders.push_back(builder);
     }
 
     void Application::Run()
@@ -31,9 +36,7 @@ namespace Teapot
         while (!WindowShouldClose())
         {
             const float deltaTime = GetFrameTime();
-            
-            ExecOnGameLayers([this, deltaTime](auto layer) { layer->Update(m_Scene, deltaTime); });
-
+            m_Scene.Update(deltaTime);
             m_Renderer.Draw(m_Scene);
         }
 
@@ -43,13 +46,15 @@ namespace Teapot
     void Application::StartScene()
     {
         m_Scene = {};
-
-        ExecOnGameLayers([this](auto layer) { layer->Load(m_Scene); });
-        ExecOnGameLayers([this](auto layer) { layer->Start(m_Scene); });
+        
+        for (auto& builder : m_SceneLayerBuilders)
+            m_Scene.AddLayer(builder());
+        
+        m_Scene.Start();
     }
     
     void Application::StopScene()
     {
-        ExecOnGameLayers([this](auto layer) { layer->Stop(m_Scene); });
+        m_Scene.Stop();
     }
 }
