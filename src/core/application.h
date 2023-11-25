@@ -4,22 +4,23 @@
 
 #include <ecs/scene.h>
 
+#include "event.h"
 #include "renderer.h"
 
 namespace Teapot
 {
-    class SceneLayer;
-    using SceneLayerBuilder = std::function<std::shared_ptr<SceneLayer>()>;
-
     class Application 
     {
     public:
         Application(const char* name, int32_t width, int32_t height);
         ~Application();
 
-        void AddSceneLayerBuilders(SceneLayerBuilder builder);
-
         void Run();
+
+        void BindOnSceneCreated(Event<Scene&>::Listener listener)
+        {
+            m_OnSceneCreated.AddListener(listener);
+        }
 
     protected:
         void StartScene();
@@ -31,7 +32,7 @@ namespace Teapot
         Scene m_Scene;
         Renderer m_Renderer;
 
-        std::vector<SceneLayerBuilder> m_SceneLayerBuilders;
+        // Events
+        Event<Scene&> m_OnSceneCreated;
     };
-
 }

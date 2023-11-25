@@ -49,12 +49,18 @@ namespace Teapot
         return e;
     }
 
+    void Scene::DestroyEntity(Entity entity)
+    {
+        ExecOnLayers([entity](auto layer) { layer->OnEntityDestroyed(entity); });
+        m_Registry.destroy(entity);
+    }
+
     template <class F>
     void Scene::ExecOnLayers(const F&& f)
     {
-        std::for_each(m_Layers.begin(), m_Layers.end(), [f](auto layer)
+        for (auto it = m_Layers.begin(); it != m_Layers.end(); ++it)
         {
-            f(layer);
-        });
+            f(*it);
+        };
     }
 }

@@ -1,4 +1,4 @@
-#include "core/application.h"
+#include <core/application.h>
 
 #include <ecs/components.h>
 #include <ecs/scene.h>
@@ -51,8 +51,11 @@ private:
 int main(void)
 {
     Teapot::Application app("Test", 800, 400);
-    app.AddSceneLayerBuilders([]() { return std::make_shared<SimpleLayer>(); });
-    app.Run();
+    app.BindOnSceneCreated([](Teapot::Scene& scene)
+    {
+        scene.AddLayer(std::make_shared<SimpleLayer>());
+    });
     
+    app.Run();
     return 0;
 }

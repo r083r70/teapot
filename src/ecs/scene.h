@@ -9,6 +9,8 @@ namespace Teapot
     class SceneLayer;
     class UUID;
 
+    using SceneLayerPtr = std::shared_ptr<SceneLayer>;
+
     struct Camera
     {
         Vector2 Position = Vector2(0,0);
@@ -25,7 +27,7 @@ namespace Teapot
         void Update(float deltaTime);
         void Stop();
 
-        void AddLayer(std::shared_ptr<SceneLayer> layer) { m_Layers.push_back(layer); }
+        void AddLayer(SceneLayerPtr layer) { m_Layers.push_back(layer); }
 
         entt::registry& GetRegistry() { return m_Registry; }
         const entt::registry& GetRegistry() const { return m_Registry; }
@@ -37,12 +39,14 @@ namespace Teapot
         Entity CreateEntityWithUUID(UUID uuid);
         Entity CreateEntityWithName(std::string_view name);
 
+        void DestroyEntity(Entity entity);
+
     private:
         template<class F>
         void ExecOnLayers(const F&&);
 
     private:
-        std::vector<std::shared_ptr<SceneLayer>> m_Layers;
+        std::vector<SceneLayerPtr> m_Layers;
         entt::registry m_Registry;
         Camera m_Camera;
 

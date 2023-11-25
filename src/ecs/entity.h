@@ -23,6 +23,8 @@ namespace Teapot
         template<typename C>
         bool HasComponent();
 
+        void Destroy() { m_Scene->DestroyEntity(*this); }
+
     private:
         entt::entity m_Handle;
         Scene* m_Scene;

@@ -13,20 +13,11 @@ namespace Teapot
     {
         s_Instance = this;
         InitWindow(width, height, name);
-
-        // Add default Layers
-        AddSceneLayerBuilders([]() { return std::make_shared<Physics>(); });
-        AddSceneLayerBuilders([]() { return std::make_shared<ScriptManager>(); });
     }
 
     Application::~Application()
     {
         CloseWindow();
-    }
-
-    void Application::AddSceneLayerBuilders(SceneLayerBuilder builder)
-    {
-        m_SceneLayerBuilders.push_back(builder);
     }
 
     void Application::Run()
@@ -46,10 +37,11 @@ namespace Teapot
     void Application::StartScene()
     {
         m_Scene = {};
+        m_Scene.AddLayer(std::make_shared<Physics>());
+        m_Scene.AddLayer(std::make_shared<ScriptManager>());
         
-        for (auto& builder : m_SceneLayerBuilders)
-            m_Scene.AddLayer(builder());
-        
+        m_OnSceneCreated.Broadcast(m_Scene);
+
         m_Scene.Start();
     }
     
